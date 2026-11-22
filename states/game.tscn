@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://cah68c1djyc52"]
+
+[ext_resource type="Script" uid="uid://ouiosrpk3uiy" path="res://scripts/game/game_scene.gd" id="1_ynugl"]
+[ext_resource type="PackedScene" uid="uid://dyx1odyckbi0u" path="res://objects/game/player.tscn" id="2_46ofl"]
+[ext_resource type="Texture2D" uid="uid://bj6xvox1mnyb4" path="res://states/Taiko Drum Master 14_NM00057_20261122100944.png" id="2_xo3cr"]
+[ext_resource type="FontFile" uid="uid://dcmmow22af063" path="res://graphics/fonts/dfp.ttf" id="3_o4kfr"]
+[ext_resource type="Texture2D" uid="uid://bi2hyd8jdk2wy" path="res://graphics/game/bg.png" id="4_xo3cr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8ce6i"]
+font = ExtResource("3_o4kfr")
+font_size = 30
+
+[node name="Game" type="Control" unique_id=1795744853]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ynugl")
+
+[node name="Audio" type="AudioStreamPlayer" parent="." unique_id=165893977]
+
+[node name="TaikoDrumMaster14Nm0005720261122100944" type="Sprite2D" parent="." unique_id=1384528771]
+visible = false
+position = Vector2(480, 360)
+texture = ExtResource("2_xo3cr")
+
+[node name="SongTitleBar" type="ColorRect" parent="." unique_id=1043815037]
+layout_mode = 0
+offset_top = 331.0
+offset_right = 960.0
+offset_bottom = 381.0
+color = Color(0, 0, 0, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="SongTitleBar" unique_id=824262451]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 8
+
+[node name="SongTitle" type="Label" parent="SongTitleBar/MarginContainer" unique_id=1136296597]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_8ce6i")
+horizontal_alignment = 2
+
+[node name="Player" parent="." unique_id=1453980129 instance=ExtResource("2_46ofl")]
+layout_mode = 1
+offset_top = 172.0
+offset_bottom = 179.07999
+
+[node name="Label" type="Label" parent="." unique_id=1093116441]
+layout_mode = 0
+offset_right = 208.0
+offset_bottom = 72.0
+
+[node name="Label2" type="Label" parent="." unique_id=1818701077]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 23.0
+grow_horizontal = 0
+horizontal_alignment = 2
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=1398341309]
+z_index = -1
+repeat_size = Vector2(740.625, 0)
+autoscroll = Vector2(-96, 0)
+repeat_times = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=75031103]
+scale = Vector2(1.875, 1.875)
+texture = ExtResource("4_xo3cr")
+centered = false
+
+[connection signal="finished" from="Audio" to="." method="_on_audio_finished"]

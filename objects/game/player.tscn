@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://dyx1odyckbi0u"]
+
+[ext_resource type="Script" uid="uid://47vik47kqdj8" path="res://scripts/game/player.gd" id="1_5p535"]
+[ext_resource type="Texture2D" uid="uid://u5dypxddos1" path="res://graphics/game/lane.png" id="1_mqfcm"]
+[ext_resource type="Texture2D" uid="uid://cpol6h00kky06" path="res://graphics/game/notes.png" id="2_5p535"]
+[ext_resource type="Texture2D" uid="uid://b1rs56xwa2ttu" path="res://graphics/game/taiko_back.png" id="3_410g5"]
+[ext_resource type="Texture2D" uid="uid://bcno8smdbfe6u" path="res://graphics/game/gogotime/lane_glow.png" id="3_emep4"]
+[ext_resource type="Shader" uid="uid://dqiyu13s5lgdp" path="res://graphics/shaders/notes.gdshader" id="4_410g5"]
+[ext_resource type="PackedScene" uid="uid://d0aq540krop78" path="res://objects/game/taiko.tscn" id="6_emep4"]
+[ext_resource type="Texture2D" uid="uid://ceuolctxsokrv" path="res://graphics/game/gogotime/top_glow.png" id="7_k3wig"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8ce6i"]
+blend_mode = 1
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ce6i"]
+atlas = ExtResource("2_5p535")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ar42l"]
+shader = ExtResource("4_410g5")
+shader_parameter/t = 0.0
+shader_parameter/lane_width = 795.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5p535"]
+shader = ExtResource("4_410g5")
+shader_parameter/t = 0.0
+shader_parameter/lane_width = 795.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_k3wig"]
+blend_mode = 2
+
+[node name="Player" type="Control" unique_id=1453980129]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.21100001
+offset_bottom = 7.0799866
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5p535")
+
+[node name="Main" type="Control" parent="." unique_id=1380892046]
+anchors_preset = 0
+offset_right = 960.0
+offset_bottom = 152.0
+
+[node name="Lane" type="TextureRect" parent="Main" unique_id=143385382]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 162.0
+texture = ExtResource("1_mqfcm")
+
+[node name="GogoTimeLane" type="TextureRect" parent="Main/Lane" unique_id=1126994636]
+material = SubResource("CanvasItemMaterial_8ce6i")
+layout_mode = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 798.0
+offset_bottom = 115.0
+scale = Vector2(1, 1e-05)
+pivot_offset_ratio = Vector2(0, 0.5)
+texture = ExtResource("3_emep4")
+
+[node name="JudgePoint" type="TextureRect" parent="Main/Lane" unique_id=1749122329]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 12.0
+offset_right = 106.0
+offset_bottom = 108.0
+texture = SubResource("AtlasTexture_8ce6i")
+
+[node name="Barlines" type="MultiMeshInstance2D" parent="Main/Lane/JudgePoint" unique_id=281761486]
+material = SubResource("ShaderMaterial_ar42l")
+position = Vector2(48, 48)
+scale = Vector2(1, -1.15)
+
+[node name="Notes" type="MultiMeshInstance2D" parent="Main/Lane/JudgePoint" unique_id=1487012464]
+material = SubResource("ShaderMaterial_5p535")
+position = Vector2(48, 48)
+scale = Vector2(1, -1)
+
+[node name="TaikoBackground" type="TextureRect" parent="Main" unique_id=1455550359]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_410g5")
+
+[node name="Taiko" parent="Main/TaikoBackground" unique_id=338089276 instance=ExtResource("6_emep4")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 176.0
+offset_bottom = 176.0
+
+[node name="GogoTimeBack" type="TextureRect" parent="." unique_id=386069057]
+modulate = Color(1, 1, 1, 0)
+material = SubResource("CanvasItemMaterial_k3wig")
+layout_mode = 0
+offset_top = -172.0
+offset_right = 960.0
+texture = ExtResource("7_k3wig")
+expand_mode = 1

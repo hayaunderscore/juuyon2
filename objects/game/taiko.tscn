@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://d0aq540krop78"]
+
+[ext_resource type="Texture2D" uid="uid://cvunjv635u182" path="res://graphics/game/taiko/taiko.png" id="1_h1f4a"]
+[ext_resource type="Script" uid="uid://q0u7gnur2ek3" path="res://scripts/game/taiko.gd" id="2_hoely"]
+[ext_resource type="Texture2D" uid="uid://dyr8hcnrrxm7s" path="res://graphics/game/taiko/kat.png" id="2_j11i7"]
+[ext_resource type="Texture2D" uid="uid://ch25qxvgnt40a" path="res://graphics/game/taiko/don.png" id="3_hoely"]
+[ext_resource type="AudioStream" uid="uid://dblto0pi7m6f1" path="res://sound/game/dong.wav" id="5_yuhp4"]
+[ext_resource type="AudioStream" uid="uid://bjlih8jspddi" path="res://sound/game/ka.wav" id="6_4nli3"]
+
+[node name="Taiko" type="TextureRect" unique_id=338089276]
+anchors_preset = -1
+anchor_right = 0.2
+anchor_bottom = 0.26700002
+offset_bottom = -0.24002075
+texture = ExtResource("1_h1f4a")
+script = ExtResource("2_hoely")
+metadata/_edit_group_ = true
+
+[node name="KatLeft" type="TextureRect" parent="." unique_id=1114848989]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_j11i7")
+
+[node name="KatRight" type="TextureRect" parent="." unique_id=469091566]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_j11i7")
+flip_h = true
+
+[node name="DonLeft" type="TextureRect" parent="." unique_id=675719427]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_hoely")
+
+[node name="DonRight" type="TextureRect" parent="." unique_id=939805392]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_hoely")
+flip_h = true
+
+[node name="DonLeftSound" type="AudioStreamPlayer" parent="." unique_id=1081150908]
+stream = ExtResource("5_yuhp4")
+
+[node name="KatLeftSound" type="AudioStreamPlayer" parent="." unique_id=1390561647]
+stream = ExtResource("6_4nli3")
+
+[node name="DonRightSound" type="AudioStreamPlayer" parent="." unique_id=801413348]
+stream = ExtResource("5_yuhp4")
+
+[node name="KatRightSound" type="AudioStreamPlayer" parent="." unique_id=1000396072]
+stream = ExtResource("6_4nli3")
