@@ -13,15 +13,19 @@ Currently only available in autoplay, no branches are supported.
 ---
 
 > What Taiko arcade release is this supposed to emulate?
+
 None of them.
 
 > Are there any plans to make this more accurate to Taiko 14?
+
 No. There may be skinning features later on to tweak it to look like 14, but nothing very accurate.
 
 > Is this better than YataiDON?
+
 Helllll no!
 
 > Does this accurately replicate TaikoJiro's quirks yet?
+
 Nope! It is planned, though the most concrete thing is subpar `#DELAY` compatibility.
 
 # Contributing
