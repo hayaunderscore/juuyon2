@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1rs56xwa2ttu"
-path="res://.godot/imported/taiko_back.png-f83ed662fa666bce686642a1b0a90bb4.ctex"
+uid="uid://cw1nsn5krmj4y"
+path="res://.godot/imported/kat_glow.png-af721fcfdfdb3a02d9722fa8b4a6a090.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/game/taiko_back.png"
-dest_files=["res://.godot/imported/taiko_back.png-f83ed662fa666bce686642a1b0a90bb4.ctex"]
+source_file="res://graphics/game/lane/kat_glow.png"
+dest_files=["res://.godot/imported/kat_glow.png-af721fcfdfdb3a02d9722fa8b4a6a090.ctex"]
 
 [params]
 

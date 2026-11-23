@@ -1,13 +1,18 @@
 [gd_scene format=3 uid="uid://dyx1odyckbi0u"]
 
 [ext_resource type="Script" uid="uid://47vik47kqdj8" path="res://scripts/game/player.gd" id="1_5p535"]
-[ext_resource type="Texture2D" uid="uid://u5dypxddos1" path="res://graphics/game/lane.png" id="1_mqfcm"]
 [ext_resource type="Texture2D" uid="uid://cpol6h00kky06" path="res://graphics/game/notes.png" id="2_5p535"]
-[ext_resource type="Texture2D" uid="uid://b1rs56xwa2ttu" path="res://graphics/game/taiko_back.png" id="3_410g5"]
+[ext_resource type="Texture2D" uid="uid://d1d4a1kweyi6w" path="res://graphics/game/lane/lane.png" id="2_emep4"]
 [ext_resource type="Texture2D" uid="uid://bcno8smdbfe6u" path="res://graphics/game/gogotime/lane_glow.png" id="3_emep4"]
+[ext_resource type="Texture2D" uid="uid://c7p20unsc1dpg" path="res://graphics/game/lane/don_glow.png" id="3_q6njv"]
+[ext_resource type="Texture2D" uid="uid://cw1nsn5krmj4y" path="res://graphics/game/lane/kat_glow.png" id="4_5rn8y"]
 [ext_resource type="Shader" uid="uid://dqiyu13s5lgdp" path="res://graphics/shaders/notes.gdshader" id="4_410g5"]
+[ext_resource type="Texture2D" uid="uid://dtoecj03ocgnf" path="res://graphics/game/lane/good_glow.png" id="5_idwm4"]
 [ext_resource type="PackedScene" uid="uid://d0aq540krop78" path="res://objects/game/taiko.tscn" id="6_emep4"]
+[ext_resource type="Texture2D" uid="uid://bvl5fvyuhgpsl" path="res://graphics/game/lane/taiko_back.png" id="6_q6njv"]
 [ext_resource type="Texture2D" uid="uid://ceuolctxsokrv" path="res://graphics/game/gogotime/top_glow.png" id="7_k3wig"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_5rn8y"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8ce6i"]
 blend_mode = 1
@@ -49,7 +54,35 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 162.0
-texture = ExtResource("1_mqfcm")
+texture = ExtResource("2_emep4")
+
+[node name="DonLane" type="TextureRect" parent="Main/Lane" unique_id=1289910242]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 798.0
+offset_bottom = 115.0
+texture = ExtResource("3_q6njv")
+
+[node name="KatLane" type="TextureRect" parent="Main/Lane" unique_id=2046359088]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 798.0
+offset_bottom = 115.0
+texture = ExtResource("4_5rn8y")
+
+[node name="GoodLane" type="TextureRect" parent="Main/Lane" unique_id=422008813]
+modulate = Color(1, 1, 1, 0)
+material = SubResource("CanvasItemMaterial_5rn8y")
+layout_mode = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 798.0
+offset_bottom = 115.0
+texture = ExtResource("5_idwm4")
 
 [node name="GogoTimeLane" type="TextureRect" parent="Main/Lane" unique_id=1126994636]
 material = SubResource("CanvasItemMaterial_8ce6i")
@@ -84,7 +117,7 @@ scale = Vector2(1, -1)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("3_410g5")
+texture = ExtResource("6_q6njv")
 
 [node name="Taiko" parent="Main/TaikoBackground" unique_id=338089276 instance=ExtResource("6_emep4")]
 layout_mode = 0
@@ -104,3 +137,5 @@ offset_top = -172.0
 offset_right = 960.0
 texture = ExtResource("7_k3wig")
 expand_mode = 1
+
+[connection signal="side_hit" from="Main/TaikoBackground/Taiko" to="." method="_on_taiko_side_hit"]

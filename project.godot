@@ -39,7 +39,6 @@ TJAParser="*uid://bs0w8cc2jmojc"
 window/size/viewport_width=960
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
-window/stretch/scale_mode="integer"
 window/vsync/vsync_mode=0
 
 [physics]

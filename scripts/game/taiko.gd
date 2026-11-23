@@ -11,6 +11,8 @@ enum Part {
 	KAT = 1
 }
 
+signal side_hit(part: Part, side: Direction)
+
 @onready var kat: Array[TextureRect] = [$KatLeft, $KatRight]
 @onready var don: Array[TextureRect] = [$DonLeft, $DonRight]
 @onready var kat_sounds: Array[AudioStreamPlayer] = [$KatLeftSound, $KatRightSound]
@@ -19,6 +21,7 @@ var kat_tweens: Array[Tween] = [null, null]
 var don_tweens: Array[Tween] = [null, null]
 
 func hit_side(part: Part, side: Direction):
+	side_hit.emit(part, side)
 	match part:
 		Part.DON:
 			don_sounds[side].play()
@@ -32,9 +35,9 @@ func hit_side(part: Part, side: Direction):
 	match part:
 		Part.DON:
 			don[side].modulate.a = 1.0
-			tween.tween_property(don[side], "modulate:a", 0.0, 0.1).set_delay(0.1)
+			tween.tween_property(don[side], "modulate:a", 0.0, 0.067).set_delay(0.1)
 			don_tweens[side] = tween
 		Part.KAT:
 			kat[side].modulate.a = 1.0
-			tween.tween_property(kat[side], "modulate:a", 0.0, 0.1).set_delay(0.1)
+			tween.tween_property(kat[side], "modulate:a", 0.0, 0.067).set_delay(0.1)
 			kat_tweens[side] = tween

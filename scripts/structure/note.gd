@@ -22,7 +22,7 @@ enum NoteType {
 	GOGOSTART,
 	GOGOEND,
 	EMPTY,
-	ROLL_HEAD, # Generally, roll heads are considered as a note only for the draw list.
+	ROLL_BODY, # Only really used for the draw list.
 }
 
 const NOTE_ROLL_HEADS: Dictionary[NoteType, bool] = {
@@ -43,7 +43,7 @@ const NOTE_CHAR_TO_TYPE: Dictionary[String, NoteType] = {
 	"6": NoteType.BIG_ROLL,
 	"7": NoteType.BALLOON,
 	"8": NoteType.END_ROLL,
-	"9": NoteType.KUSADAMA,
+	"9": NoteType.BALLOON, # For now, Kusadamas are balloons
 	"G": NoteType.SWAP,
 	"C": NoteType.BOMB,
 	"D": NoteType.FUSE,
@@ -57,12 +57,14 @@ const NOTE_CHAR_TO_TYPE: Dictionary[String, NoteType] = {
 @export var scroll: Vector2 = Vector2.ZERO
 @export var hidden: bool = false
 
+@export var roll_tail: Note = null
 @export var roll_head: Note = null
 @export var balloon_value: int = 0
 @export var gogotime: bool = false
 @export var index: int = 0
 @export var draw_index: int = 0
 @export var phonetic: int = 0
+@export var end_time: float = 0.0 # For balloons only lmao
 
 var hit: bool = false
 

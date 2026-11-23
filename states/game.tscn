@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dyx1odyckbi0u" path="res://objects/game/player.tscn" id="2_46ofl"]
 [ext_resource type="Texture2D" uid="uid://bj6xvox1mnyb4" path="res://states/Taiko Drum Master 14_NM00057_20261122100944.png" id="2_xo3cr"]
 [ext_resource type="FontFile" uid="uid://dcmmow22af063" path="res://graphics/fonts/dfp.ttf" id="3_o4kfr"]
-[ext_resource type="Texture2D" uid="uid://bi2hyd8jdk2wy" path="res://graphics/game/bg.png" id="4_xo3cr"]
+[ext_resource type="Texture2D" uid="uid://dfyqxnl6fhllj" path="res://graphics/game/back/bg.png" id="5_o4kfr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8ce6i"]
 font = ExtResource("3_o4kfr")
@@ -77,7 +77,7 @@ repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=75031103]
 scale = Vector2(1.875, 1.875)
-texture = ExtResource("4_xo3cr")
+texture = ExtResource("5_o4kfr")
 centered = false
 
 [connection signal="finished" from="Audio" to="." method="_on_audio_finished"]

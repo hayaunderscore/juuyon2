@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bi2hyd8jdk2wy"
-path="res://.godot/imported/bg.png-4486c1cf43e38b546dba7e0bfb47f170.ctex"
+uid="uid://bvl5fvyuhgpsl"
+path="res://.godot/imported/taiko_back.png-df75cb9ade3fcfa622c09ff259bb843c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/game/bg.png"
-dest_files=["res://.godot/imported/bg.png-4486c1cf43e38b546dba7e0bfb47f170.ctex"]
+source_file="res://graphics/game/lane/taiko_back.png"
+dest_files=["res://.godot/imported/taiko_back.png-df75cb9ade3fcfa622c09ff259bb843c.ctex"]
 
 [params]
 

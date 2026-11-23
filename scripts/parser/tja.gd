@@ -140,6 +140,8 @@ var barline_index: int = 0
 var event_index: int = 0
 		
 var current_note: Note = null
+var roll_head: Note = null
+var roll_body: Note = null
 var barlines: bool = true
 var gogotime: bool = false
 
@@ -157,6 +159,8 @@ func _parse_chart_data(song: Song, chart: Chart):
 	last_measure_time = time
 	
 	current_note = null
+	roll_head = null
+	roll_body = null
 	barlines = true
 	gogotime = false
 		
@@ -183,7 +187,6 @@ func _parse_chart_data(song: Song, chart: Chart):
 		last_measure_time = time
 		var note_count: int = 0
 		var delays: float = 0
-		var roll_head: Note = null
 		var note_started: bool = false
 		for buf in measure_buffer:
 			if buf.begins_with("#"): continue
@@ -229,20 +232,31 @@ func _parse_chart_data(song: Song, chart: Chart):
 					_push_barline.call()
 					note_started = true
 				if _valid_note(buf) > Note.NoteType.NONE:
-					current_note = Note.new(_valid_note(buf), (time), scroll, note_index)
+					current_note = Note.new(_valid_note(buf), time, scroll, note_index)
 					current_note.bpm = bpm
 					if Note.NOTE_ROLL_HEADS.has(current_note.type):
 						roll_head = current_note
 					if current_note.type == Note.NoteType.END_ROLL and roll_head != null:
 						current_note.roll_head = roll_head
+						if roll_head.type == Note.NoteType.BALLOON:
+							roll_head.end_time = time
+						if roll_body:
+							roll_body.roll_tail = current_note
+							roll_body = null
 						roll_head = null
 					current_note_data.push_back(current_note)
 					note_index += 1
+					if Note.NOTE_ROLL_HEADS.has(current_note.type) and current_note.type != Note.NoteType.BALLOON:
+						roll_body = Note.new(Note.NoteType.ROLL_BODY, time, scroll, note_index)
+						roll_body.bpm = bpm
+						roll_body.roll_head = current_note
+						current_note_data.push_back(roll_body)
+						note_index += 1
 				time += (60 * (meter / note_count) / bpm) + delays
-		if note_count == 0:
-			time += (60 * meter / bpm) + delays
 		if not note_started:
 			_push_barline.call()
+		if note_count == 0:
+			time += (60 * meter / bpm) + delays
 		measure_buffer.clear()
 		
 	for line in chart.raw_data.split("\n"):
