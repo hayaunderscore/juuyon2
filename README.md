@@ -2,7 +2,7 @@
 
 Take 2 of the Gen 2 based Taiko simulator, powered again by [Godot](https://godotengine.org/).
 
-Currently only available in autoplay, no branches are supported.
+Currently only available in autoplay.
 
 > [!CAUTION]
 > This project is nowhere near complete, nor will it be completed very soon.
