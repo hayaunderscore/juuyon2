@@ -252,7 +252,10 @@ func _update_events(t: float):
 				tween.tween_property(gogo_time_back, "modulate:a", 0.0, 0.13)
 				tween.tween_property(gogo_time_lane, "scale:y", 0.0, 0.13)
 			Event.CommandType.BRANCHSTART:
-				_evaluate_branch(event.value1)
+				_evaluate_branch(floori(event.value1))
+			Event.CommandType.END:
+				get_tree().change_scene_to_file("res://test.tscn")
+				return
 
 func _evaluate_branch(branch_index: int):
 	_current_branch_section += 1

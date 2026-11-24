@@ -79,5 +79,3 @@ repeat_times = 3
 scale = Vector2(1.875, 1.875)
 texture = ExtResource("5_o4kfr")
 centered = false
-
-[connection signal="finished" from="Audio" to="." method="_on_audio_finished"]

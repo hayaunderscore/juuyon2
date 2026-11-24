@@ -166,6 +166,7 @@ var branch_start_balloon_offset: int = 0
 var current_branch: Branch
 var current_branch_path: Branch.BranchPath
 var currently_branching: bool = false
+var spawned_bar_line_for_branch: bool = false
 var currently_sectioning: bool = false
 var explicit_barline: bool = false
 var section_bar: Note = null
@@ -198,6 +199,14 @@ func _parse_chart_data(song: Song, chart: Chart):
 	section_bar = null
 	barlines = true
 	gogotime = false
+	
+	current_branch = null
+	current_branch_path = Branch.BranchPath.NONE
+	currently_branching = false
+	spawned_bar_line_for_branch = false
+	currently_sectioning = false
+	explicit_barline = false
+	section_bar = null
 		
 	var measure_buffer: PackedStringArray
 		
@@ -285,6 +294,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						branch_start_time = time
 						branch_start_balloon_offset = balloon_offset
 						currently_branching = true
+						spawned_bar_line_for_branch = true
 						
 						var branch: Branch = Branch.new()
 						branch.condition = Branch.STR_TO_COND.get(args[0], Branch.BranchCondition.ROLL)
@@ -307,6 +317,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						branch_index += 1
 					"branchend":
 						currently_branching = false
+						spawned_bar_line_for_branch = false
 						current_branch_path = Branch.BranchPath.NONE
 						current_branch = null
 						current_note_data = chart.notes
@@ -345,8 +356,16 @@ func _parse_chart_data(song: Song, chart: Chart):
 						current_delays = current_branch.master_delays
 			else:
 				if not note_started:
-					# Barline is only added upon the first definition of a note
-					_push_barline.call()
+					if not explicit_barline:
+						# Barline is only added upon the first definition of a note
+						var bl: Note = _push_barline.call(currently_branching and spawned_bar_line_for_branch)
+						if currently_sectioning:
+							section_bar = bl
+							currently_sectioning = false
+					else:
+						currently_sectioning = false
+						explicit_barline = false
+					spawned_bar_line_for_branch = false
 					note_started = true
 				if _valid_note(buf) > Note.NoteType.NONE:
 					current_note = Note.new(_valid_note(buf), time, scroll, note_index)
@@ -406,6 +425,8 @@ func _parse_chart_data(song: Song, chart: Chart):
 				"barlineon":
 					barlines = true
 				"end":
+					current_events = chart.events
+					_push_event.call(Event.CommandType.END)
 					_flush_measure.call()
 					break
 			

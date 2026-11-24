@@ -56,7 +56,4 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	$Player.update_player_physics(game_elapsed)
-
-func _on_audio_finished() -> void:
-	# Send us back to the test song select for now
-	get_tree().change_scene_to_file("res://test.tscn")
+	
