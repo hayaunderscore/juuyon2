@@ -5,6 +5,7 @@ const int DATA_PART = 4;
 
 uniform sampler2D atlas : filter_nearest, repeat_disable;
 uniform sampler2D note_data : filter_nearest, repeat_disable;
+uniform sampler2D branch_data : filter_nearest, repeat_disable;
 
 uniform float t;
 uniform float lane_width = 795;
@@ -17,6 +18,10 @@ void vertex() {
 	vec4 player_data = INSTANCE_CUSTOM;
 	vec4 misc_note_data = texelFetch(note_data, data_loc + ivec2(2, 0), 0);
 	vec4 roll_tail_timing_data = texelFetch(note_data, data_loc + ivec2(3, 0), 0);
+	
+	ivec2 branch_data_loc = ivec2((INSTANCE_ID % DATA_ROW), INSTANCE_ID / DATA_ROW);
+	vec4 note_branch_data = texelFetch(branch_data, branch_data_loc, 0);
+	
 	rect = texelFetch(note_data, data_loc + ivec2(1, 0), 0);
 	
 	// scroll * (lane_width / 4) * (bpm / 60)
@@ -26,6 +31,8 @@ void vertex() {
 	int other_note_type = int(floor(misc_note_data.y));
 	
 	if (player_data.x == 1.0 || (misc_note_data.z > 0.0 && t >= misc_note_data.z && (note_type == 7 || other_note_type == 7))) {
+		VERTEX = vec2(1e9);
+	} else if (note_branch_data.x > -1.0 && !(int(note_branch_data.x) == int(player_data.y) && int(note_branch_data.y) == int(player_data.z))) {
 		VERTEX = vec2(1e9);
 	} else {
 		// This is a roll body, handle things differently
@@ -42,8 +49,9 @@ void vertex() {
 				VERTEX = head;
 			} else {
 				vec2 u = dir / len;
+				if (u.x < -0.0001) u = -u;
 				vec2 p = vec2(-u.y, u.x);
-				VERTEX = (head + tail) * 0.5 + p * (VERTEX.x * rect.z) + u * (VERTEX.y * len);
+				VERTEX = (head + tail) * 0.5 + u * (VERTEX.x * len) + p * (VERTEX.y * rect.w);
 			}
 		} else if (note_type == 8) { // Roll tails are adjusted
 			if (other_note_type == 7) { // Just move this to the note head

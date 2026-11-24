@@ -56,6 +56,7 @@ const NOTE_CHAR_TO_TYPE: Dictionary[String, NoteType] = {
 @export var meter: float = 0.0
 @export var scroll: Vector2 = Vector2.ZERO
 @export var hidden: bool = false
+@export var section_barline: bool = false
 
 @export var roll_tail: Note = null
 @export var roll_head: Note = null
@@ -67,6 +68,8 @@ const NOTE_CHAR_TO_TYPE: Dictionary[String, NoteType] = {
 @export var end_time: float = 0.0 # For balloons only lmao
 
 var hit: bool = false
+var section: int = -1
+var branch: Branch.BranchPath
 
 func _init(_type: NoteType, _time: float, _scroll: Vector2, _idx: int, _hidden: bool = false):
 	type = _type

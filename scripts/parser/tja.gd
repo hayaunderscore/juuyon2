@@ -128,6 +128,12 @@ const FLUSH_HANDLED_COMMANDS: Dictionary[String, bool] = {
 	"gogostart": true,
 	"gogoend": true,
 	"delay": true,
+	"section": true,
+	"branchstart": true,
+	"branchend": true,
+	"n": true,
+	"e": true,
+	"m": true,
 }
 
 var bpm: float = 0
@@ -135,9 +141,13 @@ var time: float = 0
 var meter: float = 4.0 * 4.0 / 4.0
 var scroll: Vector2 = Vector2.RIGHT
 var balloon_offset: int = 0
+var balloon_nor_offset: int = 0
+var balloon_exp_offset: int = 0
+var balloon_mas_offset: int = 0
 var note_index: int = 0
 var barline_index: int = 0
 var event_index: int = 0
+var branch_index: int = 0
 		
 var current_note: Note = null
 var roll_head: Note = null
@@ -147,35 +157,63 @@ var gogotime: bool = false
 
 var last_measure_time: float = 0
 
+# Branch related
+var branch_start_bpm: float = 0
+var branch_start_meter: float = 0
+var branch_start_scroll: Vector2 = Vector2.ZERO
+var branch_start_time: float = 0
+var branch_start_balloon_offset: int = 0
+var current_branch: Branch
+var current_branch_path: Branch.BranchPath
+var currently_branching: bool = false
+var currently_sectioning: bool = false
+var explicit_barline: bool = false
+var section_bar: Note = null
+
+var current_note_data: Array[Note]
+var current_barline_data: Array[Note]
+var current_events: Array[Event]
+var current_bpm_events: Array[Event]
+var current_delays: Array[Event]
+
 func _parse_chart_data(song: Song, chart: Chart):
 	bpm = song.start_bpm
 	time = -song.offset
 	meter = 4.0 * 4.0 / 4.0
 	scroll = Vector2(song.head_scroll, 0)
 	balloon_offset = 0
+	balloon_nor_offset = 0
+	balloon_exp_offset = 0
+	balloon_mas_offset = 0
 	note_index = 0
 	barline_index = 0
 	event_index = 0
+	branch_index = 0
+	current_branch_path = Branch.BranchPath.NONE
 	last_measure_time = time
 	
 	current_note = null
 	roll_head = null
 	roll_body = null
+	section_bar = null
 	barlines = true
 	gogotime = false
 		
 	var measure_buffer: PackedStringArray
 		
-	var current_note_data: Array[Note] = chart.notes
-	var current_barline_data: Array[Note] = chart.barlines
-	var current_events: Array[Event] = chart.events
-	var current_bpm_events: Array[Event] = chart.bpm_events
-	var current_delays: Array[Event] = chart.delays
+	current_note_data = chart.notes
+	current_barline_data = chart.barlines
+	current_events = chart.events
+	current_bpm_events = chart.bpm_events
+	current_delays = chart.delays
 	
-	var _push_barline: Callable = func():
+	var _push_barline: Callable = func(branching: bool = false):
 		current_barline_data.push_back(Note.new(Note.NoteType.BARLINE, time, scroll, barline_index, not barlines))
 		current_barline_data.back().bpm = bpm
+		if branching:
+			current_barline_data.back().section_barline = true
 		barline_index += 1
+		return current_barline_data.back()
 	
 	var _push_event: Callable = func(type: Event.CommandType, value1: float = 0.0, value2: float = 0.0):
 		var ev: Event = Event.new(type, time, value1, value2)
@@ -226,6 +264,85 @@ func _parse_chart_data(song: Song, chart: Chart):
 							current_bpm_events.push_back(Event.new(Event.CommandType.BPMCHANGE, time, 0))
 							current_delays.push_back(Event.new(Event.CommandType.DELAY, time, value.to_float()))
 							current_bpm_events.push_back(Event.new(Event.CommandType.BPMCHANGE, time, bpm))
+					"section":
+						currently_sectioning = true
+						section_bar = _push_barline.call(true)
+						explicit_barline = true
+					"branchstart":
+						var args: PackedStringArray = value.split(",")
+						if args.size() != 3:
+							print("#BRANCHSTART requires 3 arguments! Ignoring...")
+							continue
+						
+						current_note_data = chart.notes
+						current_barline_data = chart.barlines
+						current_events = chart.events
+						current_delays = chart.delays
+						
+						branch_start_bpm = bpm
+						branch_start_meter = meter
+						branch_start_scroll = scroll
+						branch_start_time = time
+						branch_start_balloon_offset = balloon_offset
+						currently_branching = true
+						
+						var branch: Branch = Branch.new()
+						branch.condition = Branch.STR_TO_COND.get(args[0], Branch.BranchCondition.ROLL)
+						branch.expert_requirement = args[1].to_int()
+						branch.master_requirement = args[2].to_int()
+						var offset: float = (120.0 / bpm) * 2.0
+						var start_time: float = time - offset
+						if section_bar:
+							start_time = section_bar.time - offset
+							section_bar = null
+						branch.time = start_time
+						branch.index = branch_index
+						current_branch = branch
+						
+						chart.branches.push_back(branch)
+						var ev: Event = Event.new(Event.CommandType.BRANCHSTART, branch.time, branch_index)
+						ev.index = event_index
+						event_index += 1
+						current_events.push_back(ev)
+						branch_index += 1
+					"branchend":
+						currently_branching = false
+						current_branch_path = Branch.BranchPath.NONE
+						current_branch = null
+						current_note_data = chart.notes
+						current_barline_data = chart.barlines
+						current_events = chart.events
+						current_delays = chart.delays
+					"n":
+						bpm = branch_start_bpm
+						meter = branch_start_meter
+						scroll = branch_start_scroll
+						time = branch_start_time
+						current_branch_path = Branch.BranchPath.NORMAL
+						current_note_data = current_branch.normal_notes
+						current_barline_data = current_branch.normal_barlines
+						current_events = current_branch.normal_events
+						current_delays = current_branch.normal_delays
+					"e":
+						bpm = branch_start_bpm
+						meter = branch_start_meter
+						scroll = branch_start_scroll
+						time = branch_start_time
+						current_branch_path = Branch.BranchPath.EXPERT
+						current_note_data = current_branch.expert_notes
+						current_barline_data = current_branch.expert_barlines
+						current_events = current_branch.expert_events
+						current_delays = current_branch.expert_delays
+					"m":
+						bpm = branch_start_bpm
+						meter = branch_start_meter
+						scroll = branch_start_scroll
+						time = branch_start_time
+						current_branch_path = Branch.BranchPath.MASTER
+						current_note_data = current_branch.master_notes
+						current_barline_data = current_branch.master_barlines
+						current_events = current_branch.master_events
+						current_delays = current_branch.master_delays
 			else:
 				if not note_started:
 					# Barline is only added upon the first definition of a note
@@ -233,6 +350,9 @@ func _parse_chart_data(song: Song, chart: Chart):
 					note_started = true
 				if _valid_note(buf) > Note.NoteType.NONE:
 					current_note = Note.new(_valid_note(buf), time, scroll, note_index)
+					if currently_branching:
+						current_note.section = branch_index - 1
+						current_note.branch = current_branch_path
 					current_note.bpm = bpm
 					if Note.NOTE_ROLL_HEADS.has(current_note.type):
 						roll_head = current_note
@@ -250,6 +370,9 @@ func _parse_chart_data(song: Song, chart: Chart):
 						roll_body = Note.new(Note.NoteType.ROLL_BODY, time, scroll, note_index)
 						roll_body.bpm = bpm
 						roll_body.roll_head = current_note
+						if currently_branching:
+							roll_body.section = current_note.section
+							roll_body.branch = current_note.branch
 						current_note_data.push_back(roll_body)
 						note_index += 1
 				time += (60 * (meter / note_count) / bpm) + delays
@@ -294,20 +417,8 @@ func _parse_chart_data(song: Song, chart: Chart):
 			if c == ",":
 				_flush_measure.call()
 	
-	chart.notes.sort_custom(func(a: Note, b: Note):
-		if a.time == b.time:
-			return a.index > b.index
-		return a.time > b.time
-	)
-	
-	chart.events.sort_custom(func(a: Event, b: Event):
-		if a.time == b.time:
-			return a.index > b.index
-		return a.time > b.time
-	)
-	
-	for i in chart.notes.size():
-		chart.notes[i].draw_index = i
+	chart.sort_everything()
+	chart.add_drawables()
 
 func parse_tja_note_data(song: Song, chart_index: int = -1):
 	if chart_index <= -1:
