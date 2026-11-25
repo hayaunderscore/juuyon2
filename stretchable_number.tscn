@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://2ta5omoqtwxs"]
+
+[ext_resource type="Script" uid="uid://qoyqm5120rwt" path="res://scripts/ui/stretchable_number.gd" id="1_yipy7"]
+
+[node name="StretchableNumber" type="Control" unique_id=1241037277]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_yipy7")

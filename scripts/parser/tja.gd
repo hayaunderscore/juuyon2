@@ -73,7 +73,8 @@ func parse_tja_metadata(path: String) -> Song:
 				"course":
 					if value.is_valid_int():
 						current_chart.course_type = int(value) as Chart.CourseType
-					current_chart.course_type = Chart.CourseType.get(value.to_upper())
+					else:
+						current_chart.course_type = Chart.CourseType.get(value.to_upper(), Chart.CourseType.ONI)
 				"level":
 					current_chart.level = int(value)
 				"scoreinit":
@@ -229,8 +230,20 @@ func _parse_chart_data(song: Song, chart: Chart):
 		ev.index = event_index
 		event_index += 1
 		current_events.push_back(ev)
+	
+	var _push_barline_for_measure: Callable = func():
+		if not explicit_barline:
+			var bl: Note = _push_barline.call(currently_branching and spawned_bar_line_for_branch)
+			if currently_sectioning:
+				section_bar = bl
+				currently_sectioning = false
+		else:
+			currently_sectioning = false
+			explicit_barline = false
+		spawned_bar_line_for_branch = false
 		
 	var _flush_measure: Callable = func():
+		explicit_barline = false
 		last_measure_time = time
 		var note_count: int = 0
 		var delays: float = 0
@@ -304,6 +317,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						var start_time: float = time - offset
 						if section_bar:
 							start_time = section_bar.time - offset
+							section_bar.section_barline = true
 							section_bar = null
 						branch.time = start_time
 						branch.index = branch_index
@@ -334,6 +348,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						current_barline_data = current_branch.normal_barlines
 						current_events = current_branch.normal_events
 						current_delays = current_branch.normal_delays
+						note_started = true
 					"e":
 						bpm = branch_start_bpm
 						meter = branch_start_meter
@@ -344,6 +359,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						current_barline_data = current_branch.expert_barlines
 						current_events = current_branch.expert_events
 						current_delays = current_branch.expert_delays
+						note_started = true
 					"m":
 						bpm = branch_start_bpm
 						meter = branch_start_meter
@@ -354,18 +370,11 @@ func _parse_chart_data(song: Song, chart: Chart):
 						current_barline_data = current_branch.master_barlines
 						current_events = current_branch.master_events
 						current_delays = current_branch.master_delays
+						note_started = true
 			else:
 				if not note_started:
-					if not explicit_barline:
-						# Barline is only added upon the first definition of a note
-						var bl: Note = _push_barline.call(currently_branching and spawned_bar_line_for_branch)
-						if currently_sectioning:
-							section_bar = bl
-							currently_sectioning = false
-					else:
-						currently_sectioning = false
-						explicit_barline = false
-					spawned_bar_line_for_branch = false
+					# Barline is only added upon the first definition of a note
+					_push_barline_for_measure.call()
 					note_started = true
 				if _valid_note(buf) > Note.NoteType.NONE:
 					current_note = Note.new(_valid_note(buf), time, scroll, note_index)
@@ -396,7 +405,7 @@ func _parse_chart_data(song: Song, chart: Chart):
 						note_index += 1
 				time += (60 * (meter / note_count) / bpm) + delays
 		if not note_started:
-			_push_barline.call()
+			_push_barline_for_measure.call()
 		if note_count == 0:
 			time += (60 * meter / bpm) + delays
 		measure_buffer.clear()

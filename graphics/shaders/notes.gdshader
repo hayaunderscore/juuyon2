@@ -8,7 +8,9 @@ uniform sampler2D note_data : filter_nearest, repeat_disable;
 uniform sampler2D branch_data : filter_nearest, repeat_disable;
 
 uniform float t;
+uniform float b;
 uniform float lane_width = 795;
+uniform bool bmscroll = false;
 
 varying flat vec4 rect;
 

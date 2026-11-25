@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://ch25qxvgnt40a" path="res://graphics/game/taiko/don.png" id="3_hoely"]
 [ext_resource type="AudioStream" uid="uid://dblto0pi7m6f1" path="res://sound/game/dong.wav" id="5_yuhp4"]
 [ext_resource type="AudioStream" uid="uid://bjlih8jspddi" path="res://sound/game/ka.wav" id="6_4nli3"]
+[ext_resource type="Script" uid="uid://qoyqm5120rwt" path="res://scripts/ui/stretchable_number.gd" id="7_dhtin"]
+[ext_resource type="Texture2D" uid="uid://q71pluu8iq87" path="res://graphics/game/text/combo.png" id="8_f024v"]
 
 [node name="Taiko" type="TextureRect" unique_id=338089276]
 anchors_preset = -1
@@ -14,7 +16,6 @@ anchor_bottom = 0.26700002
 offset_bottom = -0.24002075
 texture = ExtResource("1_h1f4a")
 script = ExtResource("2_hoely")
-metadata/_edit_group_ = true
 
 [node name="KatLeft" type="TextureRect" parent="." unique_id=1114848989]
 modulate = Color(1, 1, 1, 0)
@@ -57,3 +58,22 @@ stream = ExtResource("5_yuhp4")
 
 [node name="KatRightSound" type="AudioStreamPlayer" parent="." unique_id=1000396072]
 stream = ExtResource("6_4nli3")
+
+[node name="Combo" type="Control" parent="." unique_id=1270602035]
+visible = false
+layout_mode = 1
+anchor_right = 0.208
+anchor_bottom = 0.208
+offset_left = 88.0
+offset_top = 52.0
+offset_right = 88.063995
+offset_bottom = 52.064
+script = ExtResource("7_dhtin")
+texture = ExtResource("8_f024v")
+cell_size = Vector2(48, 48)
+offset = Vector2(-16, 0)
+align = 1
+stretch = Vector2(0, 3.5)
+stretch_time = 0.05
+stretch_recede = 0.05
+metadata/_custom_type_script = "uid://qoyqm5120rwt"

@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bj6xvox1mnyb4" path="res://states/Taiko Drum Master 14_NM00057_20261122100944.png" id="2_xo3cr"]
 [ext_resource type="FontFile" uid="uid://dcmmow22af063" path="res://graphics/fonts/dfp.ttf" id="3_o4kfr"]
 [ext_resource type="Texture2D" uid="uid://dfyqxnl6fhllj" path="res://graphics/game/back/bg.png" id="5_o4kfr"]
+[ext_resource type="Texture2D" uid="uid://d3fnq878heagp" path="res://graphics/game/back/stage.png" id="6_uc7h8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8ce6i"]
 font = ExtResource("3_o4kfr")
@@ -20,6 +21,7 @@ grow_vertical = 2
 script = ExtResource("1_ynugl")
 
 [node name="Audio" type="AudioStreamPlayer" parent="." unique_id=165893977]
+volume_db = -0.45
 
 [node name="TaikoDrumMaster14Nm0005720261122100944" type="Sprite2D" parent="." unique_id=1384528771]
 visible = false
@@ -72,10 +74,18 @@ horizontal_alignment = 2
 [node name="Parallax2D" type="Parallax2D" parent="." unique_id=1398341309]
 z_index = -1
 repeat_size = Vector2(740.625, 0)
-autoscroll = Vector2(-96, 0)
+autoscroll = Vector2(-128, 0)
 repeat_times = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=75031103]
 scale = Vector2(1.875, 1.875)
 texture = ExtResource("5_o4kfr")
 centered = false
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1282923590]
+z_index = -1
+layout_mode = 0
+offset_top = -112.0
+offset_right = 960.0
+offset_bottom = 608.0
+texture = ExtResource("6_uc7h8")

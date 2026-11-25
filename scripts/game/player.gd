@@ -61,6 +61,7 @@ func build() -> void:
 	_build_note_data()
 	_build_barline_data()
 	_build_branch_data_for_notes()
+	_build_branch_data_for_barlines()
 
 func _build_note_data():
 	var notes: Array[Note] = selected_chart.drawable_notes
@@ -144,7 +145,7 @@ func _build_branch_data_for_barlines():
 func _write_branch_data(note: Note):
 	var x: int = (note.draw_index % DATA_ROW)
 	var y: int = (note.draw_index) / DATA_ROW
-	_branch_img.set_pixel(x, y, Color(note.section, note.branch, 0, 0))
+	(_branch_img_bl if note.type == Note.NoteType.BARLINE else _branch_img).set_pixel(x, y, Color(note.section, note.branch, 0, 0))
 
 func _write_note_data(note: Note):
 	var x: int = (note.draw_index % DATA_ROW) * DATA_PART
@@ -221,12 +222,14 @@ func update_notes(t: float):
 				taiko.hit_side(TaikoDrum.Part.DON, _autoplay_don_side as TaikoDrum.Direction)
 				_branch_condition_count += 1
 				_branch_note_count += 1
+				taiko.combo += 1
 			Note.NoteType.KAT, Note.NoteType.BIG_KAT:
 				_update_texture_hit_note(note)
 				_autoplay_kat_side = !_autoplay_kat_side
 				taiko.hit_side(TaikoDrum.Part.KAT, _autoplay_kat_side as TaikoDrum.Direction)
 				_branch_condition_count += 1
 				_branch_note_count += 1
+				taiko.combo += 1
 			Note.NoteType.ROLL, Note.NoteType.BIG_ROLL:
 				_autoplay_drumroll = true
 			Note.NoteType.END_ROLL:
@@ -263,6 +266,7 @@ func _evaluate_branch(branch_index: int):
 	var branch: Branch = selected_chart.branches[branch_index]
 	var notes_to_merge: Array[Note] = branch.normal_notes
 	var events_to_merge: Array[Event] = branch.normal_events
+	var barlines_to_merge: Array[Note] = branch.normal_barlines
 	
 	if branch.condition == Branch.BranchCondition.PERCENTAGE:
 		_branch_condition_count = maxi(mini(floori(float(_branch_condition_count) / _branch_note_count * 100.0), 100), 0)
@@ -272,19 +276,25 @@ func _evaluate_branch(branch_index: int):
 	if _branch_condition_count >= branch.expert_requirement and _branch_condition_count < branch.master_requirement and branch.expert_requirement > 0:
 		notes_to_merge = branch.expert_notes
 		events_to_merge = branch.expert_events
+		barlines_to_merge = branch.expert_barlines
 		_current_selected_branch_path = Branch.BranchPath.EXPERT
 	elif _branch_condition_count >= branch.master_requirement:
 		notes_to_merge = branch.master_notes
 		events_to_merge = branch.master_events
+		barlines_to_merge = branch.master_barlines
 		_current_selected_branch_path = Branch.BranchPath.MASTER
 	
 	for note in notes_to_merge:
 		_update_instance_note(note)
+	for barline in barlines_to_merge:
+		_update_instance_note(barline)
 	
 	selected_chart.notes.append_array(notes_to_merge)
 	selected_chart.notes.sort_custom(Chart.sort_note_func)
 	selected_chart.events.append_array(events_to_merge)
 	selected_chart.events.sort_custom(Chart.sort_event_func)
+	selected_chart.barlines.append_array(barlines_to_merge)
+	selected_chart.barlines.sort_custom(Chart.sort_note_func)
 	
 	print("Branched handled: section %d, switched to branch path %d" % [branch_index, _current_selected_branch_path])
 	
